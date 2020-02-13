@@ -1,0 +1,465 @@
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\Main.obj
+COMPILER INVOKED BY: H:\Keil_program\C51\BIN\C51.EXE Main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\Main.lst) TABS(2) OBJECT(.\Objects\Main.obj)
+
+line level    source
+
+   1          /*****************************************/
+   2          /* PROJECT: Stairs LEDS                  */
+   3          /* DATE: 2018.11 -                     */
+   4          /* CHECKED: 2019.03.22                   */
+   5          /*****************************************/
+   6          #include <REGX51.H>
+   7          
+   8          /***  MACROS ***/
+   9          #define _LED P1_0
+  10          #define _ALL_LIGHTS_OFF 0x0000
+  11          #define _LIGHT_DETECTOR P1_1
+  12          #define _DOWN_DETECTOR P3_2
+  13          #define _UP_DETECTOR P3_3
+  14          #define _ALL_LIGHTS_STATUS P1_7
+  15          #define _TIMER_16BIT_MODE 0x01
+  16          #define _TIMER_ENABLE 1
+  17          #define _IE_ENABLE_TIMER  0x82
+  18          #define _ID_DISABLE_ALL 0x00
+  19          #define _STATES_DEFAULT 0x0000
+  20          
+  21          /*
+  22          * 16 - delay between timer interrupt when person is detected (default 16)
+  23          * Changed to 14 , 22.03.2019
+  24          * Changed to 10 , 11.07.2019
+  25          * Changed to  8 , 24.11.2019
+  26          * changed to  3 , 17.12.2019
+  27          */
+  28          #define _TIMER_DELAY_MOVE_DETECTOR  3
+  29          
+  30          /*
+  31          * 10 - ~10.49 sec to go through 16 steps -> ~0.6 sec per step
+  32          * Changed from 10 to 9, 22.03.2019
+  33          * Changed from 9 to 7, 24.11.2019
+  34          * Changed from 9 to 6, 17.12.2019
+  35          */
+  36          #define _TIMER_DELAY_LIGHTS_MOVEMENT  6
+  37          
+  38          
+  39          /** New consts from 11.07.2019  **/
+  40          #define _MOVING_DELAY 30
+  41          #define _IDLE_DELAY   80
+  42          #define _DAILY_DELAY  150
+  43          
+  44          /***  ****** ***/
+  45          
+  46          /***  GLOBAL VARIABLES ***/
+  47          code unsigned int BLOCKER_STATE_LEDS_DOWN = 0x003F; //0000 0000  0011 1111
+  48          code unsigned int BLOCKER_STATE_LEDS_UP = 0xFC00; //1111 1100  0000 0000
+  49          code unsigned int STARTING_STATE_DOWN = 0x001F; //0000 0000  0001 1111
+  50          code unsigned int STARTING_STATE_UP = 0xF800; //1111 1000  0000 0000
+  51          
+  52          code unsigned char table[] = {
+  53                  0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
+  54                  0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 2   
+
+  55                  0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,
+  56                  0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8,
+  57                  0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
+  58                  0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4,
+  59                  0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec,
+  60                  0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc,
+  61                  0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2,
+  62                  0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
+  63                  0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea,
+  64                  0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa,
+  65                  0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6,
+  66                  0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6,
+  67                  0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
+  68                  0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe,
+  69                  0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1,
+  70                  0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1,
+  71                  0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9,
+  72                  0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
+  73                  0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5,
+  74                  0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5,
+  75                  0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed,
+  76                  0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd,
+  77                  0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
+  78                  0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3,
+  79                  0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb,
+  80                  0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb,
+  81                  0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7,
+  82                  0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
+  83                  0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef,
+  84                  0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff,
+  85              };
+  86          
+  87          
+  88          volatile bit lastDownSensorState;
+  89          volatile bit lastUpSensorState;
+  90          volatile bit personDownDetected;
+  91          volatile bit personUpDetected;
+  92          
+  93          
+  94          
+  95          volatile unsigned int currentLedState;
+  96          
+  97          volatile unsigned int stateFromUpToDown;  //state from TOP to DOWN
+  98          volatile unsigned int stateFromDownToUp;  //state from DOWN to UP
+  99          
+ 100          volatile unsigned char timerLightsMovementCounter;  //timer - how many times timer ticks before moving ligh
+             -ts up/down
+ 101          volatile unsigned char timerMoveDetectorCounter;  //timer - how many times timer ticks before checking move
+             -ment detector state
+ 102          /***  **************** ***/
+ 103          
+ 104          volatile unsigned char ledDelay; //delay for bliniking led
+ 105          volatile unsigned int _downForceDelay = 0;
+ 106          
+ 107          
+ 108          /*****************************************/
+ 109          /***************** HELPERS ***************/
+ 110          /*****************************************/
+ 111          unsigned char Reverse(unsigned char number)
+ 112          {
+ 113   1        return table[number];
+ 114   1      }
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 3   
+
+ 115          
+ 116          void SetLeds(int state)
+ 117          {
+ 118   1        P0 = Reverse(state >> 8);
+ 119   1        P2 = state & 0x00FF;
+ 120   1      }
+ 121          
+ 122          
+ 123          void Delay(int time)
+ 124          {
+ 125   1        unsigned int d1;
+ 126   1        unsigned int d2 ;
+ 127   1        for(d1 = 0; d1 < time; d1++)
+ 128   1        {
+ 129   2          for(d2 = 0; d2 < 2000; d2++)
+ 130   2          {
+ 131   3            ;
+ 132   3          }
+ 133   2        }
+ 134   1      }
+ 135          
+ 136          /*CHECKING SENSORS*/
+ 137          void CheckDownSensorState(void)
+ 138          {
+ 139   1        bit currentState = _DOWN_DETECTOR;
+ 140   1      
+ 141   1        if(lastDownSensorState && currentState)
+ 142   1        {
+ 143   2          personDownDetected = 1;
+ 144   2          lastDownSensorState = 0;
+ 145   2        }
+ 146   1        else
+ 147   1        {
+ 148   2          personDownDetected = 0;
+ 149   2          lastDownSensorState = currentState;
+ 150   2        }
+ 151   1      }
+ 152          void CheckUpSensorState(void)
+ 153          {
+ 154   1        bit currentState = _UP_DETECTOR;
+ 155   1      
+ 156   1        if(lastUpSensorState && currentState)
+ 157   1        {
+ 158   2          personUpDetected = 1;
+ 159   2          lastUpSensorState = 0;
+ 160   2        }
+ 161   1        else
+ 162   1        {
+ 163   2          personUpDetected = 0;
+ 164   2          lastUpSensorState= currentState;
+ 165   2        }
+ 166   1      }
+ 167          
+ 168          
+ 169          
+ 170          
+ 171          
+ 172          bit CanStartLedsFromDown()
+ 173          {
+ 174   1        if(--_downForceDelay > 0) return 0;
+ 175   1        //peson detected and 6 leds from down are turned off (0000 0000 0011 1111)
+ 176   1        return personDownDetected & !((stateFromDownToUp | stateFromUpToDown) & BLOCKER_STATE_LEDS_DOWN);
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 4   
+
+ 177   1      }
+ 178          bit CanStartLedsFromUp()
+ 179          {
+ 180   1        return personUpDetected & !((stateFromUpToDown | stateFromDownToUp) & BLOCKER_STATE_LEDS_UP);
+ 181   1      }
+ 182          
+ 183          
+ 184          
+ 185          
+ 186          void SetDownStartingLeds()
+ 187          {
+ 188   1        stateFromDownToUp = stateFromDownToUp | STARTING_STATE_DOWN;
+ 189   1      }
+ 190          void SetUpStartingLeds()
+ 191          {
+ 192   1        stateFromUpToDown = stateFromUpToDown | STARTING_STATE_UP;
+ 193   1      }
+ 194          
+ 195          void DecrementTimerCounters(void)
+ 196          {
+ 197   1        timerLightsMovementCounter--;
+ 198   1        timerMoveDetectorCounter--;
+ 199   1      }
+ 200          
+ 201          
+ 202          void MoveLeds(void)
+ 203          {
+ 204   1        stateFromDownToUp = stateFromDownToUp << 1;
+ 205   1        stateFromUpToDown = stateFromUpToDown >> 1;
+ 206   1      }
+ 207          
+ 208          void SetCurrentState(void)
+ 209          {
+ 210   1        if(stateFromDownToUp && 0xA000 == 1)
+ 211   1        {
+ 212   2          
+ 213   2        }
+ 214   1        if(stateFromUpToDown && 0x0001 == 1)
+ 215   1        {
+ 216   2          _downForceDelay = 10000;
+ 217   2        }
+ 218   1        
+ 219   1        currentLedState = (stateFromDownToUp | stateFromUpToDown);
+ 220   1      }
+ 221          
+ 222          void SetDayMode(void)
+ 223          {
+ 224   1        //turn leds off
+ 225   1        SetLeds(_ALL_LIGHTS_OFF);
+ 226   1        //reset all timer counters
+ 227   1        timerMoveDetectorCounter = _TIMER_DELAY_MOVE_DETECTOR;
+ 228   1        timerLightsMovementCounter = _TIMER_DELAY_LIGHTS_MOVEMENT;
+ 229   1        //reset all states
+ 230   1        stateFromDownToUp = _STATES_DEFAULT;
+ 231   1        stateFromUpToDown = _STATES_DEFAULT;
+ 232   1        currentLedState = _STATES_DEFAULT;
+ 233   1        personDownDetected = 0;
+ 234   1        personUpDetected = 0;
+ 235   1        lastDownSensorState = 0;
+ 236   1        lastUpSensorState = 0;
+ 237   1      }
+ 238          
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 5   
+
+ 239          
+ 240          /*****************************************/
+ 241          /*****************************************/
+ 242          void InitVariables(void)
+ 243          {
+ 244   1        timerLightsMovementCounter = _TIMER_DELAY_LIGHTS_MOVEMENT;
+ 245   1        timerMoveDetectorCounter = _TIMER_DELAY_MOVE_DETECTOR;
+ 246   1      
+ 247   1        stateFromUpToDown = 1;
+ 248   1        stateFromDownToUp = 0;
+ 249   1      
+ 250   1        lastDownSensorState = 0;
+ 251   1        lastUpSensorState = 0;
+ 252   1        personDownDetected = 0;
+ 253   1        personUpDetected = 0;
+ 254   1        currentLedState = 0x0000;
+ 255   1      }
+ 256          
+ 257          void InitTimerInterrupt(void)
+ 258          {
+ 259   1        //set timer values
+ 260   1        TMOD = _TIMER_16BIT_MODE;
+ 261   1        //enable timer T0
+ 262   1        TR0  = _TIMER_ENABLE;
+ 263   1        //enable timer interrupts
+ 264   1        IE   = _IE_ENABLE_TIMER;
+ 265   1      }
+ 266          
+ 267          /*****************************************/
+ 268          /************ INTERRUPT ******************/
+ 269          /*****************************************/
+ 270          void timer_interrupt(void) interrupt 1
+ 271          {
+ 272   1        // 1 - light detected
+ 273   1        // 0 - night mode
+ 274   1        if(_LIGHT_DETECTOR)
+ 275   1        {
+ 276   2          SetDayMode();
+ 277   2          //go out
+ 278   2          return;
+ 279   2        }
+ 280   1      
+ 281   1        DecrementTimerCounters();
+ 282   1      
+ 283   1        if(!timerLightsMovementCounter) //move lights
+ 284   1        {
+ 285   2          MoveLeds();
+ 286   2          timerLightsMovementCounter = _TIMER_DELAY_LIGHTS_MOVEMENT;
+ 287   2        }
+ 288   1      
+ 289   1        if(!timerMoveDetectorCounter) //check detectors states
+ 290   1        {
+ 291   2          //check states of move detectors
+ 292   2          CheckDownSensorState();
+ 293   2          CheckUpSensorState();
+ 294   2      
+ 295   2          if(CanStartLedsFromDown())
+ 296   2          {
+ 297   3            SetDownStartingLeds();
+ 298   3          }
+ 299   2          if(CanStartLedsFromUp())
+ 300   2          {
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 6   
+
+ 301   3            SetUpStartingLeds();
+ 302   3          }
+ 303   2      
+ 304   2          //RESET timer counter
+ 305   2          timerMoveDetectorCounter = _TIMER_DELAY_MOVE_DETECTOR;
+ 306   2        }
+ 307   1      
+ 308   1        SetCurrentState();
+ 309   1        SetLeds(currentLedState);
+ 310   1        
+ 311   1        if(currentLedState)
+ 312   1        {
+ 313   2            _ALL_LIGHTS_STATUS = 1;
+ 314   2        }
+ 315   1        else 
+ 316   1        {
+ 317   2            _ALL_LIGHTS_STATUS = 0;
+ 318   2        }
+ 319   1      }
+ 320          /*****************************************/
+ 321          /*****************************************/
+ 322          
+ 323          
+ 324          /*****************************************/
+ 325          /*****************************************/
+ 326          /***************** MAIN ******************/
+ 327          /*****************************************/
+ 328          /*****************************************/
+ 329          void Main(void)
+ 330          {
+ 331   1        unsigned char i;
+ 332   1        //unsigned char j;
+ 333   1      
+ 334   1        Delay(250); //delay on start
+ 335   1        Delay(250); //delay on start  
+ 336   1        Delay(250); //delay on start
+ 337   1        Delay(250); //delay on start
+ 338   1      
+ 339   1        P1_1 = 1; // - input on pin P1.1
+ 340   1        _DOWN_DETECTOR = 1;
+ 341   1        _UP_DETECTOR = 1;
+ 342   1        
+ 343   1        P0 = 0xFF;
+ 344   1        P2 = 0xFF;
+ 345   1        //P3_2 = 1; //input on all pins
+ 346   1        //P3_3 = 1;
+ 347   1        //P3_2 = 0; 
+ 348   1        //P3_3 = 0;
+ 349   1        _LED = 0;
+ 350   1      
+ 351   1        for(i = 0 ; i < 16; i++)
+ 352   1        {
+ 353   2          SetLeds(0x0001 << i);
+ 354   2          Delay(50);
+ 355   2          _LED = !_LED;
+ 356   2        }
+ 357   1        
+ 358   1        
+ 359   1        SetLeds(_ALL_LIGHTS_OFF);
+ 360   1        Delay(220);
+ 361   1      
+ 362   1        //triple blink
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 7   
+
+ 363   1        _LED = !_LED;
+ 364   1        SetLeds(0xAAAA);
+ 365   1        Delay(220);
+ 366   1      
+ 367   1        _LED = !_LED;
+ 368   1        SetLeds(0x5554);
+ 369   1        Delay(220);
+ 370   1        
+ 371   1        _LED = !_LED;
+ 372   1        SetLeds(0xAAAA);
+ 373   1        Delay(220);
+ 374   1      
+ 375   1        SetLeds(_ALL_LIGHTS_OFF);
+ 376   1        _LED = !_LED;
+ 377   1        Delay(800);
+ 378   1      
+ 379   1      
+ 380   1        InitVariables();
+ 381   1        InitTimerInterrupt();
+ 382   1      
+ 383   1        while(1)
+ 384   1        {
+ 385   2          _LED = !_LED;
+ 386   2          if(_LIGHT_DETECTOR)
+ 387   2          {
+ 388   3              Delay(_DAILY_DELAY);
+ 389   3          }
+ 390   2          else Delay(_IDLE_DELAY);
+ 391   2        }
+ 392   1      
+ 393   1      }
+ 394          
+ 395          
+ 396          
+ 397          
+ 398          
+ 399          
+ 400          
+ 401          
+ 402          
+ 403          
+ 404          
+ 405          
+ 406          
+ 407          
+ 408          
+ 409          
+ 410          
+ 411          
+ 412          
+ 413          
+ 414          
+ 415          
+ 416          
+ 417          
+ 418          
+ 419          
+ 420          
+ 421          
+ 422          
+ 423          
+ 424          
+C51 COMPILER V9.54   MAIN                                                                  02/11/2020 21:14:12 PAGE 8   
+
+ 425          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    605    ----
+   CONSTANT SIZE    =    264    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     11    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4       2
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

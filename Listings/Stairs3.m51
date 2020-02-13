@@ -1,0 +1,477 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        02/11/2020  21:14:13  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+H:\KEIL_PROGRAM\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\Main.obj TO .\Objects\Stairs3 PRINT (.\Listings\Stairs
+>> 3.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\Main.obj (MAIN)
+  H:\KEIL_PROGRAM\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\Stairs3 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000BH     UNIT         ?DT?MAIN
+                    0013H     000DH                  *** GAP ***
+            BIT     0020H.0   0000H.4   UNIT         ?BI?MAIN
+            BIT     0020H.4   0000H.1   UNIT         _BIT_GROUP_
+                    0020H.5   0000H.3                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     07F2H                  *** GAP ***
+            CODE    0800H     0108H     UNIT         ?CO?MAIN
+            CODE    0908H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0994H     0087H     UNIT         ?PR?MAIN?MAIN
+            CODE    0A1BH     006CH     UNIT         ?PR?TIMER_INTERRUPT?MAIN
+            CODE    0A87H     003AH     UNIT         ?PR?CANSTARTLEDSFROMDOWN?MAIN
+            CODE    0AC1H     0030H     UNIT         ?PR?_DELAY?MAIN
+            CODE    0AF1H     0026H     UNIT         ?PR?CANSTARTLEDSFROMUP?MAIN
+            CODE    0B17H     0022H     UNIT         ?PR?SETDAYMODE?MAIN
+            CODE    0B39H     001EH     UNIT         ?PR?INITVARIABLES?MAIN
+            CODE    0B57H     0019H     UNIT         ?PR?SETCURRENTSTATE?MAIN
+            CODE    0B70H     0017H     UNIT         ?PR?MOVELEDS?MAIN
+            CODE    0B87H     0016H     UNIT         ?PR?CHECKDOWNSENSORSTATE?MAIN
+            CODE    0B9DH     0016H     UNIT         ?PR?CHECKUPSENSORSTATE?MAIN
+            CODE    0BB3H     000FH     UNIT         ?PR?_SETLEDS?MAIN
+            CODE    0BC2H     000DH     UNIT         ?PR?SETDOWNSTARTINGLEDS?MAIN
+            CODE    0BCFH     000DH     UNIT         ?PR?SETUPSTARTINGLEDS?MAIN
+            CODE    0BDCH     0009H     UNIT         ?PR?INITTIMERINTERRUPT?MAIN
+            CODE    0BE5H     0007H     UNIT         ?PR?_REVERSE?MAIN
+            CODE    0BECH     0005H     UNIT         ?PR?DECREMENTTIMERCOUNTERS?MAIN
+            CODE    0BF1H     0005H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Stairs3 (?C_STARTUP)
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 2
+
+
+
+
+SEGMENT                                    BIT_GROUP 
+  +--> CALLED SEGMENT                   START    LENGTH
+-------------------------------------------------------
+?C_C51STARTUP                           -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                           -----    -----
+  +--> ?PR?_DELAY?MAIN
+  +--> ?PR?_SETLEDS?MAIN
+  +--> ?PR?INITVARIABLES?MAIN
+  +--> ?PR?INITTIMERINTERRUPT?MAIN
+
+?PR?_DELAY?MAIN                         -----    -----
+  +--> ?PR?_SETLEDS?MAIN
+
+?PR?_SETLEDS?MAIN                       -----    -----
+  +--> ?PR?_REVERSE?MAIN
+
+?PR?_REVERSE?MAIN                       -----    -----
+  +--> ?CO?MAIN
+
+*** NEW ROOT ***************************************************
+
+?PR?TIMER_INTERRUPT?MAIN                -----    -----
+  +--> ?PR?SETDAYMODE?MAIN
+  +--> ?PR?DECREMENTTIMERCOUNTERS?MAIN
+  +--> ?PR?MOVELEDS?MAIN
+  +--> ?PR?CHECKDOWNSENSORSTATE?MAIN
+  +--> ?PR?CHECKUPSENSORSTATE?MAIN
+  +--> ?PR?CANSTARTLEDSFROMDOWN?MAIN
+  +--> ?PR?SETDOWNSTARTINGLEDS?MAIN
+  +--> ?PR?CANSTARTLEDSFROMUP?MAIN
+  +--> ?PR?SETUPSTARTINGLEDS?MAIN
+  +--> ?PR?SETCURRENTSTATE?MAIN
+  +--> ?PR?_SETLEDS?MAIN
+
+?PR?SETDAYMODE?MAIN                     -----    -----
+  +--> ?PR?_SETLEDS?MAIN
+
+?PR?CHECKDOWNSENSORSTATE?MAIN           0020H.4  0000H.1
+
+?PR?CHECKUPSENSORSTATE?MAIN             0020H.4  0000H.1
+
+?PR?CANSTARTLEDSFROMDOWN?MAIN           -----    -----
+  +--> ?CO?MAIN
+
+?PR?SETDOWNSTARTINGLEDS?MAIN            -----    -----
+  +--> ?CO?MAIN
+
+?PR?CANSTARTLEDSFROMUP?MAIN             -----    -----
+  +--> ?CO?MAIN
+
+?PR?SETUPSTARTINGLEDS?MAIN              -----    -----
+  +--> ?CO?MAIN
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 3
+
+
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Stairs3 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0908H         SEGMENT       ?C_C51STARTUP
+  I:0021H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:090BH         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0908H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0908H         LINE#         133
+  C:090AH         LINE#         134
+  C:090BH         LINE#         135
+  C:090CH         LINE#         136
+  C:090EH         LINE#         185
+  C:0911H         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0B87H         PUBLIC        CheckDownSensorState
+  D:0008H         PUBLIC        _downForceDelay
+  D:0080H         PUBLIC        P0
+  B:0020H.0       PUBLIC        lastUpSensorState
+  D:00A0H         PUBLIC        P2
+  C:0994H         PUBLIC        Main
+  B:0020H.1       PUBLIC        personUpDetected
+  C:0808H         PUBLIC        table
+  C:0800H         PUBLIC        BLOCKER_STATE_LEDS_DOWN
+  C:0AF1H         PUBLIC        CanStartLedsFromUp
+  D:00A8H         PUBLIC        IE
+  B:0090H.0       PUBLIC        P1_0
+  B:0090H.1       PUBLIC        P1_1
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 4
+
+
+  B:00B0H.2       PUBLIC        P3_2
+  B:00B0H.3       PUBLIC        P3_3
+  B:0090H.7       PUBLIC        P1_7
+  C:0B57H         PUBLIC        SetCurrentState
+  C:0B70H         PUBLIC        MoveLeds
+  D:000AH         PUBLIC        currentLedState
+  C:0BC2H         PUBLIC        SetDownStartingLeds
+  D:000CH         PUBLIC        ledDelay
+  C:0B9DH         PUBLIC        CheckUpSensorState
+  D:0089H         PUBLIC        TMOD
+  C:0B39H         PUBLIC        InitVariables
+  C:0BB3H         PUBLIC        _SetLeds
+  D:000DH         PUBLIC        timerLightsMovementCounter
+  C:0BCFH         PUBLIC        SetUpStartingLeds
+  C:0B17H         PUBLIC        SetDayMode
+  B:0020H.2       PUBLIC        lastDownSensorState
+  B:0088H.4       PUBLIC        TR0
+  C:0806H         PUBLIC        STARTING_STATE_UP
+  B:0020H.3       PUBLIC        personDownDetected
+  C:0BE5H         PUBLIC        _Reverse
+  D:000EH         PUBLIC        stateFromDownToUp
+  D:0010H         PUBLIC        stateFromUpToDown
+  C:0A87H         PUBLIC        CanStartLedsFromDown
+  D:0012H         PUBLIC        timerMoveDetectorCounter
+  C:0804H         PUBLIC        STARTING_STATE_DOWN
+  C:0BDCH         PUBLIC        InitTimerInterrupt
+  C:0AD1H         PUBLIC        _Delay
+  C:0A1BH         PUBLIC        timer_interrupt
+  C:0802H         PUBLIC        BLOCKER_STATE_LEDS_UP
+  C:0BECH         PUBLIC        DecrementTimerCounters
+  -------         PROC          _REVERSE
+  D:0007H         SYMBOL        number
+  C:0BE5H         LINE#         111
+  C:0BE5H         LINE#         112
+  C:0BE5H         LINE#         113
+  C:0BEBH         LINE#         114
+  -------         ENDPROC       _REVERSE
+  -------         PROC          _SETLEDS
+  D:0004H         SYMBOL        state
+  C:0BB3H         LINE#         116
+  C:0BB7H         LINE#         117
+  C:0BB7H         LINE#         118
+  C:0BBEH         LINE#         119
+  C:0BC1H         LINE#         120
+  -------         ENDPROC       _SETLEDS
+  -------         PROC          L?0054
+  -------         ENDPROC       L?0054
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        time
+  -------         DO            
+  D:0004H         SYMBOL        d1
+  D:0002H         SYMBOL        d2
+  -------         ENDDO         
+  C:0AD1H         LINE#         123
+  C:0AD1H         LINE#         124
+  C:0AD1H         LINE#         127
+  C:0ADBH         LINE#         128
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 5
+
+
+  C:0ADBH         LINE#         129
+  C:0ADEH         LINE#         130
+  C:0ADEH         LINE#         132
+  C:0AE9H         LINE#         133
+  C:0AF0H         LINE#         134
+  -------         ENDPROC       _DELAY
+  -------         PROC          CHECKDOWNSENSORSTATE
+  -------         DO            
+  B:0020H.4       SYMBOL        currentState
+  -------         ENDDO         
+  C:0B87H         LINE#         137
+  C:0B87H         LINE#         138
+  C:0B87H         LINE#         139
+  C:0B8BH         LINE#         141
+  C:0B91H         LINE#         142
+  C:0B91H         LINE#         143
+  C:0B93H         LINE#         144
+  C:0B95H         LINE#         145
+  C:0B96H         LINE#         147
+  C:0B96H         LINE#         148
+  C:0B98H         LINE#         149
+  C:0B9CH         LINE#         150
+  C:0B9CH         LINE#         151
+  -------         ENDPROC       CHECKDOWNSENSORSTATE
+  -------         PROC          CHECKUPSENSORSTATE
+  -------         DO            
+  B:0020H.4       SYMBOL        currentState
+  -------         ENDDO         
+  C:0B9DH         LINE#         152
+  C:0B9DH         LINE#         153
+  C:0B9DH         LINE#         154
+  C:0BA1H         LINE#         156
+  C:0BA7H         LINE#         157
+  C:0BA7H         LINE#         158
+  C:0BA9H         LINE#         159
+  C:0BABH         LINE#         160
+  C:0BACH         LINE#         162
+  C:0BACH         LINE#         163
+  C:0BAEH         LINE#         164
+  C:0BB2H         LINE#         165
+  C:0BB2H         LINE#         166
+  -------         ENDPROC       CHECKUPSENSORSTATE
+  -------         PROC          CANSTARTLEDSFROMDOWN
+  C:0A87H         LINE#         172
+  C:0A87H         LINE#         173
+  C:0A87H         LINE#         174
+  C:0A9BH         LINE#         176
+  C:0AC0H         LINE#         177
+  -------         ENDPROC       CANSTARTLEDSFROMDOWN
+  -------         PROC          CANSTARTLEDSFROMUP
+  C:0AF1H         LINE#         178
+  C:0AF1H         LINE#         179
+  C:0AF1H         LINE#         180
+  C:0B16H         LINE#         181
+  -------         ENDPROC       CANSTARTLEDSFROMUP
+  -------         PROC          SETDOWNSTARTINGLEDS
+  C:0BC2H         LINE#         186
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 6
+
+
+  C:0BC2H         LINE#         187
+  C:0BC2H         LINE#         188
+  C:0BCEH         LINE#         189
+  -------         ENDPROC       SETDOWNSTARTINGLEDS
+  -------         PROC          SETUPSTARTINGLEDS
+  C:0BCFH         LINE#         190
+  C:0BCFH         LINE#         191
+  C:0BCFH         LINE#         192
+  C:0BDBH         LINE#         193
+  -------         ENDPROC       SETUPSTARTINGLEDS
+  -------         PROC          DECREMENTTIMERCOUNTERS
+  C:0BECH         LINE#         195
+  C:0BECH         LINE#         196
+  C:0BECH         LINE#         197
+  C:0BEEH         LINE#         198
+  C:0BF0H         LINE#         199
+  -------         ENDPROC       DECREMENTTIMERCOUNTERS
+  -------         PROC          MOVELEDS
+  C:0B70H         LINE#         202
+  C:0B70H         LINE#         203
+  C:0B70H         LINE#         204
+  C:0B7BH         LINE#         205
+  C:0B86H         LINE#         206
+  -------         ENDPROC       MOVELEDS
+  -------         PROC          SETCURRENTSTATE
+  C:0B57H         LINE#         208
+  C:0B57H         LINE#         209
+  C:0B57H         LINE#         210
+  C:0B57H         LINE#         211
+  C:0B57H         LINE#         213
+  C:0B57H         LINE#         214
+  C:0B5DH         LINE#         215
+  C:0B5DH         LINE#         216
+  C:0B63H         LINE#         217
+  C:0B63H         LINE#         219
+  C:0B6FH         LINE#         220
+  -------         ENDPROC       SETCURRENTSTATE
+  -------         PROC          SETDAYMODE
+  C:0B17H         LINE#         222
+  C:0B17H         LINE#         223
+  C:0B17H         LINE#         225
+  C:0B1DH         LINE#         227
+  C:0B20H         LINE#         228
+  C:0B23H         LINE#         230
+  C:0B28H         LINE#         231
+  C:0B2CH         LINE#         232
+  C:0B30H         LINE#         233
+  C:0B32H         LINE#         234
+  C:0B34H         LINE#         235
+  C:0B36H         LINE#         236
+  C:0B38H         LINE#         237
+  -------         ENDPROC       SETDAYMODE
+  -------         PROC          INITVARIABLES
+  C:0B39H         LINE#         242
+  C:0B39H         LINE#         243
+  C:0B39H         LINE#         244
+  C:0B3CH         LINE#         245
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 7
+
+
+  C:0B3FH         LINE#         247
+  C:0B45H         LINE#         248
+  C:0B4AH         LINE#         250
+  C:0B4CH         LINE#         251
+  C:0B4EH         LINE#         252
+  C:0B50H         LINE#         253
+  C:0B52H         LINE#         254
+  C:0B56H         LINE#         255
+  -------         ENDPROC       INITVARIABLES
+  -------         PROC          INITTIMERINTERRUPT
+  C:0BDCH         LINE#         257
+  C:0BDCH         LINE#         258
+  C:0BDCH         LINE#         260
+  C:0BDFH         LINE#         262
+  C:0BE1H         LINE#         264
+  C:0BE4H         LINE#         265
+  -------         ENDPROC       INITTIMERINTERRUPT
+  -------         PROC          TIMER_INTERRUPT
+  C:0A1BH         LINE#         270
+  C:0A2EH         LINE#         274
+  C:0A31H         LINE#         275
+  C:0A31H         LINE#         276
+  C:0A36H         LINE#         279
+  C:0A36H         LINE#         281
+  C:0A39H         LINE#         283
+  C:0A3DH         LINE#         284
+  C:0A3DH         LINE#         285
+  C:0A40H         LINE#         286
+  C:0A43H         LINE#         287
+  C:0A43H         LINE#         289
+  C:0A47H         LINE#         290
+  C:0A47H         LINE#         292
+  C:0A4AH         LINE#         293
+  C:0A4DH         LINE#         295
+  C:0A52H         LINE#         296
+  C:0A52H         LINE#         297
+  C:0A55H         LINE#         298
+  C:0A55H         LINE#         299
+  C:0A5AH         LINE#         300
+  C:0A5AH         LINE#         301
+  C:0A5DH         LINE#         302
+  C:0A5DH         LINE#         305
+  C:0A60H         LINE#         306
+  C:0A60H         LINE#         308
+  C:0A63H         LINE#         309
+  C:0A6AH         LINE#         311
+  C:0A70H         LINE#         312
+  C:0A70H         LINE#         313
+  C:0A72H         LINE#         314
+  C:0A74H         LINE#         316
+  C:0A74H         LINE#         317
+  C:0A76H         LINE#         318
+  C:0A76H         LINE#         319
+  -------         ENDPROC       TIMER_INTERRUPT
+  -------         PROC          MAIN
+  -------         DO            
+  D:0001H         SYMBOL        i
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/11/2020  21:14:13  PAGE 8
+
+
+  -------         ENDDO         
+  C:0994H         LINE#         329
+  C:0994H         LINE#         330
+  C:0994H         LINE#         334
+  C:099BH         LINE#         335
+  C:099EH         LINE#         336
+  C:09A1H         LINE#         337
+  C:09A4H         LINE#         339
+  C:09A6H         LINE#         340
+  C:09A8H         LINE#         341
+  C:09AAH         LINE#         343
+  C:09ADH         LINE#         344
+  C:09B0H         LINE#         349
+  C:09B2H         LINE#         351
+  C:09B4H         LINE#         352
+  C:09B4H         LINE#         353
+  C:09C8H         LINE#         354
+  C:09CFH         LINE#         355
+  C:09D1H         LINE#         356
+  C:09D5H         LINE#         359
+  C:09DBH         LINE#         360
+  C:09DDH         LINE#         363
+  C:09DDH         LINE#         364
+  C:09DDH         LINE#         365
+  C:09E0H         LINE#         367
+  C:09E2H         LINE#         368
+  C:09E9H         LINE#         369
+  C:09EDH         LINE#         371
+  C:09EDH         LINE#         372
+  C:09EDH         LINE#         373
+  C:09F0H         LINE#         375
+  C:09F5H         LINE#         376
+  C:09F7H         LINE#         377
+  C:09FEH         LINE#         380
+  C:0A01H         LINE#         381
+  C:0A04H         LINE#         383
+  C:0A04H         LINE#         384
+  C:0A04H         LINE#         385
+  C:0A06H         LINE#         386
+  C:0A09H         LINE#         387
+  C:0A09H         LINE#         388
+  C:0A10H         LINE#         389
+  C:0A12H         LINE#         390
+  C:0A19H         LINE#         391
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 037BH BYTE (43%) *
+******************************************************************************
+
+Program Size: data=20.5 xdata=0 code=1020
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

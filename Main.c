@@ -230,23 +230,16 @@ void MoveLeds(void)
 	{
 		upReDetectPreventCounter = _REDETECT_PREVENT_DELAY;
 	}
-	else
-	{
-		upReDetectPreventCounter = 0;
-	}
 
 
 	//if state from up to down is to be cleared on the bottom
 	//pin 1: 1 -> 0, but all other 5 pins are already 0
 	//then set the delay for sensors
-	if(stateFromUpToDown & BLOCKER_STATE_LEDS_DOWN) == 0x0001)
+	if((stateFromUpToDown & BLOCKER_STATE_LEDS_DOWN) == 0x0001)
 	{
 		downReDetectPreventCounter = _REDETECT_PREVENT_DELAY;
 	}
-	else
-	{
-		downReDetectPreventCounter = 0;
-	}
+
 	
 	stateFromDownToUp = stateFromDownToUp << 1;
 	stateFromUpToDown = stateFromUpToDown >> 1;
